@@ -1,0 +1,17 @@
+pipeline:
+  name: artifact-uploading-test
+  registry: https://hub.docker.com/
+  image: alpine:latest
+  upload-repo: https://github.com/CS6510-SEA-SP25/t2-cicd
+  stages:
+    - build
+  jobs:
+    - name: generate-files
+      stage: build
+      script:
+        - "mkdir -p artifacts"
+        - 'echo "Hello, World" > artifacts/hello.txt'
+        - 'echo "Pipeline Artifact Test" > artifacts/info.txt'
+        - "date > artifacts/timestamp.txt"
+      artifacts:
+        - artifacts/*.txt

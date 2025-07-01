@@ -1,0 +1,31 @@
+pipeline:
+  name: "cycle-pipeline"
+  stages:
+    - build
+    - test
+    - docs
+
+  jobs:
+    - name: "build-job"
+      needs:
+        - "test-job"
+      stage: "build"
+      image: "node:16"
+      script:
+        - "npm install"
+        - "npm run build"
+    - name: "test-job"
+      stage: "test"
+      image: "node:16"
+      script:
+        - "npm test"
+      needs:
+        - "build-job"
+
+    - name: "docs-job"
+      stage: "docs"
+      image: "node:16"
+      script:
+        - "npm run docs"
+      needs:
+        - "test-job"

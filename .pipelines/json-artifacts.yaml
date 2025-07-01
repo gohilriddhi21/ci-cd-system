@@ -1,0 +1,29 @@
+pipeline:
+  name: json-artifact-uploading-test
+  registry: https://hub.docker.com/
+  image: python:3.9-slim
+  upload-repo: https://github.com/CS6510-SEA-SP25/t2-cicd
+  stages:
+    - build
+    - test
+  jobs:
+    - name: generate-json-files
+      stage: build
+      script:
+        - "mkdir -p artifacts"
+        - "python3 -c 'import json; json.dump({\"name\": \"artifact1\", \"version\": 1}, open(\"artifacts/artifact1.json\", \"w\"))'"
+        - "python3 -c 'import json; json.dump({\"name\": \"artifact2\", \"version\": 2}, open(\"artifacts/artifact2.json\", \"w\"))'"
+        - "python3 -c 'import json; json.dump({\"name\": \"timestamp\", \"time\": \"$(date)\"}, open(\"artifacts/timestamp.json\", \"w\"))'"
+      artifacts:
+        - artifacts/artifact2.json
+
+    - name: verify-json-artifacts
+      stage: test
+      image: alpine:3.18
+      script:
+        - "ls -l artifacts"
+        - "cat artifacts/artifact1.json"
+        - "cat artifacts/artifact2.json"
+        - "cat artifacts/timestamp.json"
+      artifacts:
+        - artifacts/*.json

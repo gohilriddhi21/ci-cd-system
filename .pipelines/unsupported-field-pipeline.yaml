@@ -1,0 +1,5 @@
+pipeline:
+  jobs:
+    - name: build
+      script: mvn compile
+      unsupported_field: true

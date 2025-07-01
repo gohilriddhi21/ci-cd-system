@@ -1,0 +1,29 @@
+pipeline:
+  name: artifact-generation-test
+  registry: https://hub.docker.com/
+  image: alpine:latest
+  upload-repo: https://github.com/CS6510-SEA-SP25/t2-cicd
+  stages:
+    - build
+    - test
+  jobs:
+    - name: generate-files
+      stage: build
+      script:
+        - "mkdir -p artifacts"
+        - 'echo "Hello, World" > artifacts/hello.txt'
+        - 'echo "Pipeline Artifact Test" > artifacts/info.txt'
+        - "date > artifacts/timestamp.txt"
+      artifacts:
+        - artifacts/timestamp.txt
+
+    - name: verify-artifacts
+      stage: test
+      image: alpine:3.18
+      script:
+        - "ls -l artifacts"
+        - "cat artifacts/hello.txt"
+        - "cat artifacts/info.txt"
+        - "cat artifacts/timestamp.txt"
+      artifacts:
+        - artifacts/timestamp.txt
