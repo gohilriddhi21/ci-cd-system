@@ -1,0 +1,6 @@
+pipeline:
+  name: Test Pipeline
+  jobs:
+    - name: Build
+      script: mvn compile
+  # Missing required field (like stages)

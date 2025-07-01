@@ -1,0 +1,23 @@
+pipeline:
+  name: "no-job-pipeline"
+  stages:
+    - build
+    - test
+    - docs
+
+  jobs:
+    - name: "test-job"
+      stage: "test"
+      image: "node:16"
+      script:
+        - "npm test"
+      needs:
+        - "build-job"
+
+    - name: "docs-job"
+      stage: "docs"
+      image: "node:16"
+      script:
+        - "npm run docs"
+      needs:
+        - "test-job"

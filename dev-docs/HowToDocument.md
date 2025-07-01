@@ -1,4 +1,6 @@
-# ReadME + HowTO Guide
+# The HowTo Guide
+This HowTo guide provides step-by-step instructions on setting up and using the system.
+
 
 ## Table of Contents
 
