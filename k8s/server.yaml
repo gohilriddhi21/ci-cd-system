@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cli-server 
+  namespace: pipeline-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cli-server   
+  template:
+    metadata:
+      labels:
+        app: cli-server   
+    spec:
+      containers:
+      - name: server
+        image: yashvigarg/server:latest
+        env:
+        - name: PROJECT_DIR
+          value: /app/local_artifacts
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: server-data
+          mountPath: /app/local_artifacts
+      volumes:
+      - name: server-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cli-server
+  namespace: pipeline-system
+spec:
+  type: LoadBalancer 
+  selector:
+    app: cli-server 
+  ports:
+    - port: 8080
+      targetPort: 8080
