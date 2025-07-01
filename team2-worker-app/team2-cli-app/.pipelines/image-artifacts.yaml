@@ -1,0 +1,30 @@
+pipeline:
+  name: image-artifact-uploading-test
+  registry: https://hub.docker.com/
+  image: python:3.9-slim
+  upload-repo: https://github.com/CS6510-SEA-SP25/t2-cicd
+  stages:
+    - build
+    - test
+  jobs:
+    - name: generate-image-files
+      stage: build
+      script:
+        - "mkdir -p artifacts"
+        - "pip install pillow"
+        - "python3 -c 'from PIL import Image; img = Image.new(\"RGB\", (60, 30), color = \"red\"); img.save(\"artifacts/red_image.png\")'"
+        - "python3 -c 'from PIL import Image; img = Image.new(\"RGB\", (60, 30), color = \"blue\"); img.save(\"artifacts/blue_image.png\")'"
+        - "python3 -c 'from PIL import Image; img = Image.new(\"RGB\", (60, 30), color = \"green\"); img.save(\"artifacts/green_image.png\")'"
+      artifacts:
+        - artifacts/*.png
+
+    - name: verify-image-artifacts
+      stage: test
+      image: alpine:3.18
+      script:
+        - "ls -l artifacts"
+        - "cat artifacts/red_image.png"
+        - "cat artifacts/blue_image.png"
+        - "cat artifacts/green_image.png"
+      artifacts:
+        - artifacts/

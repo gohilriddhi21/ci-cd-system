@@ -1,0 +1,16 @@
+mongodb:
+  uri: mongodb://mongodb:27017/team_2
+#  uri: mongodb://localhost:27017/team_2
+  database: team_2
+  collection: pipeline_runs
+minio:
+  url: http://minio:9000
+#  url: http://localhost:9000
+  username: admin
+  password: password123
+rabbitmq:
+  host: rabbitmq
+#  host: localhost
+docker:
+  host: tcp://docker-socket-proxy:2375
+#  host: tcp://local_host:2375

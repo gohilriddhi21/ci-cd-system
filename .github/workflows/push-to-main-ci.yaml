@@ -1,0 +1,71 @@
+name: Push to main CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build with Maven
+        run: mvn clean install --no-transfer-progress -B
+
+      - name: Run Checkstyle
+        run: mvn checkstyle:check
+
+      - name: Upload Checkstyle Report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkstyle-report
+          path: target/checkstyle-result.xml
+
+      - name: Generate Javadoc
+        run: mvn javadoc:javadoc
+
+      - name: Upload Javadoc Documentation as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: javadoc-docs
+          path: target/reports/apidocs/edu/neu/cs6510/sp25/team2
+
+      - name: Generate code coverage report
+        run: mvn jacoco:report
+
+      - name: Upload coverage report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/edu/neu/cs6510/sp25/team2
+
+      - name: Run SpotBugs
+        run: mvn spotbugs:check
+
+      - name: Upload SpotBugs Report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: spotbugs-report
+          path: target/spotbugsXml.xml
+
+      - name: Run tests
+        run: mvn test --no-transfer-progress -B
+
+      - name: Package
+        run: mvn package
+
+      - name: Upload JAR file as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar-files
+          path: target/*.jar

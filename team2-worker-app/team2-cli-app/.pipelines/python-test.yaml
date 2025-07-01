@@ -1,0 +1,26 @@
+pipeline:
+  name: artifact-generation-python
+  image: python:3.11-slim
+  stages:
+    - build
+    - test
+  jobs:
+    - name: generate-files
+      stage: build
+      script:
+        - >
+          python -c "import os; from datetime import datetime;
+          os.makedirs('artifacts', exist_ok=True);
+          open('artifacts/hello.txt', 'w').write('Hello, World\\n');
+          open('artifacts/info.txt', 'w').write('Pipeline Artifact Test\\n');
+          open('artifacts/timestamp.txt', 'w').write(datetime.now().ctime() + '\\n')"
+
+    - name: verify-artifacts
+      stage: test
+      script:
+        - >
+          python -c "import os;
+          print('Files in artifacts directory:');
+          [print('-', f) for f in os.listdir('artifacts')];
+          files = ['hello.txt', 'info.txt', 'timestamp.txt'];
+          [print(f'\\nContents of {name}:\\n' + open(os.path.join('artifacts', name)).read().strip()) for name in files]"
